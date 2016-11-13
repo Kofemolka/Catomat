@@ -1,3 +1,6 @@
 WebApp/obj/
 WebApp/bin/
 WebApp/winscp.scr
+CatoMat/__vm/
+CatoMat/Release/
+CatoMat/Debug/

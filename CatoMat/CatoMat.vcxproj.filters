@@ -19,6 +19,9 @@
     <Filter Include="lib\wifi">
       <UniqueIdentifier>{5cb546a7-4454-41cc-ad5f-cb41cc0cf586}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\esp">
+      <UniqueIdentifier>{607c182e-477a-46a7-b27c-39f883484aef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="CatoMat.ino" />

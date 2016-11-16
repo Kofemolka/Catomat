@@ -13,21 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="lib">
-      <UniqueIdentifier>{50f47098-dbe9-4236-80ca-90eaba4b7c0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="lib\wifi">
-      <UniqueIdentifier>{5cb546a7-4454-41cc-ad5f-cb41cc0cf586}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="lib\esp">
-      <UniqueIdentifier>{607c182e-477a-46a7-b27c-39f883484aef}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="CatoMat.ino" />
-    <None Include="Server.h">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="log.h">
       <Filter>Header Files</Filter>
     </None>
@@ -35,6 +23,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="State.h">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="AppServer.h">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
@@ -54,19 +45,11 @@
     <ClInclude Include="Schedule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lib\wifi\ESP8266wifi.h">
-      <Filter>lib\wifi</Filter>
-    </ClInclude>
     <ClInclude Include="Sonar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StepperMotor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="lib\wifi\ESP8266wifi.cpp">
-      <Filter>lib\wifi</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

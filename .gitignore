@@ -4,3 +4,6 @@ WebApp/winscp.scr
 CatoMat/__vm/
 CatoMat/Release/
 CatoMat/Debug/
+SW/~*
+EspMqtt/Debug/
+EspMqtt/__vm/

@@ -28,6 +28,8 @@ public:
 
 	void Setup()
 	{
+		LOG("State: Setup");
+
 		pinMode(pinLedAuto, OUTPUT);
 		pinMode(pinLedManual, OUTPUT);
 		pinMode(pinBtn, INPUT);
@@ -71,9 +73,7 @@ public:
 			}
 
 			btnPress = false;
-		}
-
-		updateLeds();
+		}		
 	}
 
 	EMode Current()
@@ -109,8 +109,7 @@ public:
 		flashing = type;
 	}
 
-private:
-	void updateLeds()
+	void UpdateLeds()
 	{
 		if (Current() == EMode::Auto)
 		{
@@ -124,6 +123,7 @@ private:
 		}
 	}
 
+private:
 	void flashLed(int pin)
 	{
 		if (flashing != EFlash::None)

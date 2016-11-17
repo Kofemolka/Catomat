@@ -7,3 +7,5 @@ CatoMat/Debug/
 SW/~*
 EspMqtt/Debug/
 EspMqtt/__vm/
+EspMqtt/Release/
+EspMqtt/Config.h

@@ -17,19 +17,15 @@ public:
 
 	void Setup()
 	{
+		LOG("AppServer: Setup");
+
 		serial.begin(9600);
 
 		ResetEsp();
 	}
 	
 	Global::EAction Check(State::EMode currentMode)
-	{
-		if ((millis() - lastCheck) > checkDelay)
-		{
-			postStatus(currentMode);
-			lastCheck = millis();
-		}
-
+	{		
 		Global::EAction action = Global::EAction::None;
 			
 		String cmd = getCommand();			
@@ -50,6 +46,13 @@ public:
 		{
 			action = Global::EAction::ModeAuto;
 		}			
+
+		if ((millis() - lastCheck) > checkDelay)
+		{
+			postStatus(currentMode);
+			lastCheck = millis();
+			delay(50);
+		}
 
 		return action;
 	}
@@ -95,6 +98,8 @@ private:
 
 	void postStatus(State::EMode currentMode)
 	{
+		LOG("AppServer: postStatus");
+
 		String mode = "Mode: ";
 		if (currentMode == State::EMode::Auto)
 			mode += "Auto";
@@ -105,7 +110,8 @@ private:
 	}
 
 	void ResetEsp()
-	{
+	{		
+		LOG("AppServer: Reset ESP");
 		digitalWrite(_resetPin, LOW);
 		delay(100);
 		digitalWrite(_resetPin, HIGH);
@@ -114,6 +120,6 @@ private:
 	SoftwareSerial serial;
 	int _resetPin;
 	
-	const unsigned long checkDelay = 1000 * 3;
+	const unsigned long checkDelay = 1000 * 10;
 	unsigned long lastCheck = 0;
 };

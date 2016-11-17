@@ -1,3 +1,3 @@
 #pragma once
 
-#define LOG(s) { Serial.println("");Serial.print("[");Serial.print(s);Serial.println("]"); }
+#define LOG(s) { Serial.print("{");Serial.print(s);Serial.println("}"); }

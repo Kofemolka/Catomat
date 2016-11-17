@@ -28,17 +28,18 @@ State state(10, 9, 8);
 WaterValve waterValve(11);
 Feeder feeder(7, 5, 6);
 Sonar sonar(12, 12);
-AppServer server(4, 3, 2);
+AppServer server(4, 2, 3);
 
 #define FOOD_AMOUNT 15
 #define WATER_AMOUNT 100
 
 void setup() 
 {
-	OCR0A = 0xAF;
-	TIMSK0 |= _BV(OCIE0A);
-
 	Serial.begin(9600);
+
+	setupInterrupts();	
+
+	LOG("CatoMat: Setup...");		
 
 	state.Setup();
 	state.Flash(State::EFlash::Fast);
@@ -49,12 +50,44 @@ void setup()
 	server.Setup();
 
 	state.Flash(State::EFlash::None);
+
+	LOG("CatoMat: Ready");
+}
+
+void setupInterrupts()
+{
+	cli();
+
+	TCCR2A = 0;// set entire TCCR2A register to 0
+	TCCR2B = 0;// same for TCCR2B
+	TCNT2 = 0;//initialize counter value to 0
+			  // set compare match register for 8khz increments
+	OCR2A = 249;// = (16*10^6) / (8000*8) - 1 (must be <256)
+				// turn on CTC mode
+	TCCR2A |= (1 << WGM21);
+	// Set CS21 bit for 8 prescaler
+	TCCR2B |= (1 << CS21);
+	// enable timer compare interrupt
+	TIMSK2 |= (1 << OCIE2A);
+
+	sei();
 }
 
 void loop()
 {
-	Global::EAction action = server.Check(state.Current());
+	Global::EAction action = Global::EAction::None; 
 	
+	state.Check();
+
+	if (state.NeedFood())
+	{
+		action = Global::Feed;
+	}
+	else
+	{
+		action = server.Check(state.Current());
+	}
+
 	if (action == Global::EAction::None && state.Current() == State::EMode::Auto)
 	{
 		action = schedule.Check();
@@ -78,7 +111,9 @@ void loop()
 		state.Switch(State::EMode::Auto);
 		break;	
 	}
-	
+
+	sonar.Check();
+
 	if (sonar.WasVisit())
 	{
 		server.PostUpdate(Global::EAction::Visit);
@@ -88,7 +123,7 @@ void loop()
 
 void Feed(bool update)
 {	
-	LOG("Eat");
+	LOG("Serving Food...");
 		
 	state.Flash(State::EFlash::Slow);
 		
@@ -104,7 +139,7 @@ void Feed(bool update)
 
 void Pour()
 {
-	LOG("Drink");
+	LOG("Serving Water...");
 
 	state.Flash(State::EFlash::Slow);
 
@@ -115,16 +150,9 @@ void Pour()
 	state.Flash(State::EFlash::None);
 }
 
-SIGNAL(TIMER0_COMPA_vect)
-{
-	unsigned long currentMillis = millis();
-
-	state.Check();
-	sonar.Check();
-
-	if(state.NeedFood())
-	{
-		Feed(false);
-	}
+ISR(TIMER2_COMPA_vect)
+{	
+	state.UpdateLeds();	
 }
+
 

@@ -14,7 +14,7 @@ public:
 
 	void Setup()
 	{
-
+		LOG("Sonar: Setup");
 	}
 
 	bool WasVisit()
@@ -47,7 +47,8 @@ public:
 		if (!visitState) //not counting yet
 		{
 			if (overflow) //out of threshhold - start counting
-			{				
+			{			
+				LOG("Sonar: Begin Visit");
 				visitState = true;
 				visitBegin = millis();
 
@@ -67,7 +68,7 @@ public:
 
 				if (millis() - visitBegin > trigerDelay) //mark visit
 				{					
-					wasVisit = true;
+					wasVisit = true;					
 
 					return;
 				}
@@ -76,7 +77,7 @@ public:
 			{
 				if (wasVisit)
 				{
-					LOG("visitEnded");
+					LOG("Sonar: End Visit");
 					visitEnded = true;
 					return;
 				}

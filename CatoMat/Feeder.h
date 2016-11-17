@@ -10,6 +10,8 @@ public:
 		
 	void Setup()
 	{
+		LOG("Feeder: Setup");
+
 		stepper.Setup();
 	}
 
@@ -21,6 +23,6 @@ public:
 private:
 	StepperMotor stepper;
 
-	const float GrPerRev = 15.5;
+	const float GrPerRev = 5;
 };
 

@@ -8,21 +8,10 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-
-const char* ssid = "Kofemolka";
-const char* password = "Kofemolki.NET";
-
-const char* mqtt_server = "m20.cloudmqtt.com";
-const int	mqtt_port = 14365;
-const char* mqtt_user = "tulwaurv";
-const char* mqtt_pwd = "Y-RQToadCSO9";
-
-const char* in_topic = "inbox";
-const char* out_topic = "outbox";
+#include "Config.h"
 
 WiFiClient espClient;
 PubSubClient client(espClient);
-char msg[50];
 
 void setup()
 {
@@ -38,7 +27,7 @@ void setup_wifi()
   // We start by connecting to a WiFi network
   Serial.println();
   Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Serial.println(ssid);   
 
   WiFi.begin(ssid, password);
 
@@ -102,6 +91,12 @@ void loop()
   if (Serial.available())
   {
 	  String str = Serial.readString();
+
+	  Serial.print("[");
+	  Serial.print(out_topic);
+	  Serial.print("]:");
+	  Serial.print(str);
+
 	  client.publish(out_topic, str.c_str());
   }  
 }

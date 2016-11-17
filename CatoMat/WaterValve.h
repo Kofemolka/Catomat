@@ -13,6 +13,8 @@ public:
 	
 	void Setup()
 	{			
+		LOG("WaterValve: Setup");
+
 		servo.attach(pin);
 
 		servo.write(closedPos);

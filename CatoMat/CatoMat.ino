@@ -27,11 +27,8 @@ Schedule schedule(HOUR * 4, HOUR * 24);
 State state(10, 9, 8);
 WaterValve waterValve(11);
 Feeder feeder(7, 5, 6);
-Sonar sonar(12, 12);
+Sonar sonar(12, 13);
 AppServer server(4, 2, 3);
-
-#define FOOD_AMOUNT 15
-#define WATER_AMOUNT 100
 
 void setup() 
 {
@@ -74,7 +71,7 @@ void setupInterrupts()
 }
 
 void loop()
-{
+{	
 	Global::EAction action = Global::EAction::None; 
 	
 	state.Check();
@@ -118,7 +115,7 @@ void loop()
 	{
 		server.PostUpdate(Global::EAction::Visit);
 		sonar.Reset();
-	}	
+	}
 }
 
 void Feed(bool update)
@@ -127,7 +124,7 @@ void Feed(bool update)
 		
 	state.Flash(State::EFlash::Slow);
 		
-	feeder.Feed(FOOD_AMOUNT);
+	feeder.Feed();
 
 	if (update)
 	{
@@ -143,7 +140,7 @@ void Pour()
 
 	state.Flash(State::EFlash::Slow);
 
-	waterValve.Serve(WATER_AMOUNT);
+	waterValve.Serve();
 
 	server.PostUpdate(Global::EAction::Pump);
 	

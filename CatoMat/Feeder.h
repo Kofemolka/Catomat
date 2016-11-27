@@ -1,6 +1,7 @@
 #pragma once
 
 #include "StepperMotor.h"
+#include "Mem.h"
 
 class Feeder
 {
@@ -12,17 +13,17 @@ public:
 	{
 		LOG("Feeder: Setup");
 
-		stepper.Setup();
+		stepper.Setup();				
 	}
 
-	void Feed(int grams)
+	void Feed()
 	{
-		stepper.Spin( ((float)(grams)) / GrPerRev, true);
+		stepper.Spin( ((float)(Mem::GetFoodAmount())) / GrPerRev, true);
 	}
 
 private:
 	StepperMotor stepper;
-
+		
 	const float GrPerRev = 5;
 };
 

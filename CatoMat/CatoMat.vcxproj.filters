@@ -39,9 +39,6 @@
     <ClInclude Include="__vm\.CatoMat.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Stepper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Schedule.h">
       <Filter>Header Files</Filter>
     </ClInclude>

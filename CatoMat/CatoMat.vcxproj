@@ -87,7 +87,6 @@
     <ClInclude Include="Feeder.h" />
     <ClInclude Include="Schedule.h" />
     <ClInclude Include="Sonar.h" />
-    <ClInclude Include="Stepper.h" />
     <ClInclude Include="StepperMotor.h" />
     <ClInclude Include="WaterValve.h" />
     <ClInclude Include="__vm\.CatoMat.vsarduino.h" />

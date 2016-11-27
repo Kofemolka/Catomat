@@ -4,6 +4,7 @@
 #include "log.h"
 #include "State.h"
 #include "EAction.h"
+#include "Mem.h"
 
 class AppServer
 {
@@ -45,7 +46,25 @@ public:
 		else if (cmd.indexOf("auto") != -1)
 		{
 			action = Global::EAction::ModeAuto;
-		}			
+		}	
+		else if (cmd.indexOf("food=") != -1)
+		{
+			String s = cmd.substring(cmd.indexOf("food=") + 5);
+			int amount = s.toInt();
+			if (amount > 0)
+			{
+				Mem::SetFoodAmount(amount);
+			}
+		}
+		else if (cmd.indexOf("water=") != -1)
+		{
+			String s = cmd.substring(cmd.indexOf("water=") + 6);
+			int amount = s.toInt();
+			if (amount > 0)
+			{
+				Mem::SetWaterAmount(amount);
+			}
+		}
 
 		if ((millis() - lastCheck) > checkDelay)
 		{
@@ -62,15 +81,15 @@ public:
 		switch (action)
 		{
 		case Global::EAction::Feed:
-			serial.println("Feed");
+			serial.println("feed");
 			break;
 
 		case Global::EAction::Pump:
-			serial.println("Pump");
+			serial.println("pump");
 			break;
 
 		case Global::EAction::Visit:
-			serial.println("Visit");
+			serial.println("visit");
 			break;		
 		}	
 	}	
@@ -100,11 +119,11 @@ private:
 	{
 		LOG("AppServer: postStatus");
 
-		String mode = "Mode: ";
+		String mode = "mode: ";
 		if (currentMode == State::EMode::Auto)
-			mode += "Auto";
+			mode += "auto";
 		else
-			mode += "Manual";
+			mode += "manual";
 
 		serial.println(mode);
 	}
@@ -120,6 +139,6 @@ private:
 	SoftwareSerial serial;
 	int _resetPin;
 	
-	const unsigned long checkDelay = 1000 * 10;
+	const unsigned long checkDelay = 1000 * 60;
 	unsigned long lastCheck = 0;
 };

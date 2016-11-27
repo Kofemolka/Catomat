@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Servo.h>
+#include "Mem.h"
 
 class WaterValve
 {
@@ -23,13 +24,13 @@ public:
 		servo.detach();
 	}
 
-	void Serve(int grams)
+	void Serve()
 	{
 		servo.attach(pin);
 		open();
 		servo.detach();
 
-		int pause = ((float)grams - gPerMovement) / gPerMsec;
+		int pause = ((float)Mem::GetWaterAmount() - gPerMovement) / gPerMsec;
 		delay(pause);		
 
 		servo.attach(pin);
@@ -39,8 +40,8 @@ public:
 
 private:
 	void open()
-	{		
-		for (curPos; curPos >= openedPos; curPos -= 5)
+	{				
+		for (curPos; curPos >= openedPos; curPos -= 10)
 		{
 			servo.write(curPos);			
 			delay(stepDelay);
@@ -49,11 +50,13 @@ private:
 
 	void close()
 	{
-		for (curPos; curPos <= closedPos; curPos += 5)
+		for (curPos; curPos <= closedPos; curPos += 10)
 		{			
 			servo.write(curPos);			
 			delay(stepDelay);
 		}	
+
+		delay(stepDelay*4);
 	}
 
 private:
@@ -61,11 +64,11 @@ private:
 
 	const int pin;
 
-	const int closedPos = 140;
-	const int openedPos = 70;
+	const int closedPos = 135;
+	const int openedPos = 65;
 
-	const float gPerMovement = 3;
-	const float gPerMsec = 0.022;
+	const float gPerMovement = 10;
+	const float gPerMsec = 0.1;
 
 	const int stepDelay = 50;
 

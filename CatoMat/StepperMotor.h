@@ -44,6 +44,6 @@ private:
 	const int _clk;
 	const int _cw;
 
-	const int StepsPerRev = 200*8;
+	const int StepsPerRev = 200*16;
 	const int StepDelay = 200;
 };

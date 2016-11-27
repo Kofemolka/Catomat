@@ -1,6 +1,7 @@
 #pragma once
 
 #include "log.h"
+#include "Mem.h"
 
 class State
 {
@@ -34,7 +35,7 @@ public:
 		pinMode(pinLedManual, OUTPUT);
 		pinMode(pinBtn, INPUT);
 
-		currentMode = (EMode)EEPROM.read(eepromAddr);
+		currentMode = (EMode)Mem::GetMode();
 	}
 
 	virtual void Check()
@@ -92,7 +93,7 @@ public:
 	{
 		currentMode = newMode;
 
-		EEPROM.update(eepromAddr, currentMode);
+		Mem::SetMode(currentMode);
 				
 		if (currentMode == EMode::Auto)
 		{
@@ -149,8 +150,7 @@ private:
 
 	const unsigned long switchDelay = 1000 * 3;
 	const unsigned long feedDelay = 1000;
-	const unsigned long eepromAddr = 0;
-
+	
 	bool btnPress = false;
 	unsigned long pressStart = 0;
 	

@@ -15,23 +15,24 @@ public:
 	void Setup()
 	{
 		LOG("Sonar: Setup");
+		lastCheck = 0;
+		state = SonarState::Idle;
 	}
 
 	bool WasVisit()
 	{
-		return wasVisit && visitEnded;
+		return state == SonarState::Visited;
 	}
 
 	void Reset()
 	{
 		LOG("Sonar Reset");
-		wasVisit = false;
-		visitEnded = false;
+		state = SonarState::Idle;
 	}
 
 	void Check()
 	{
-		if (WasVisit())
+		if (state == SonarState::Visited)
 			return;
 
 		if ((millis() - lastCheck) < checkDelay)
@@ -39,67 +40,86 @@ public:
 
 		lastCheck = millis();
 
-		int dist = ping();
-		//LOG(dist);		
+		int dist = ping();			
 
-		bool overflow = abs(dist - etaDist) > etaTresh;
+		bool inRange = abs(dist - etaDist) > etaTresh;
 
-		if (!visitState) //not counting yet
+		switch (state)
 		{
-			if (overflow) //out of threshhold - start counting
-			{			
-				LOG("Sonar: Begin Visit");
-				visitState = true;
-				visitBegin = millis();
-
-				resetStarted = false;
-			}			
-		}
-		else
-		{
-			//already counting
-			if (overflow) 
+		case SonarState::Idle:
+			if (inRange)
 			{
-				if (resetStarted) //reset reset :)
-				{					
-					resetStarted = false;
-					resetBegin = 0;
-				}
+				LOG("SonarState::InRange");
+				state = SonarState::InRange;
+				visitBegin = millis();
+			}			
+			break;
 
-				if (millis() - visitBegin > trigerDelay) //mark visit
-				{					
-					wasVisit = true;					
-
-					return;
+		case SonarState::InRange:
+			if (inRange)
+			{
+				if (millis() - visitBegin > trigerDelay)
+				{
+					LOG("SonarState::Recording");
+					state = SonarState::Recording;
+					visitBegin = millis();
 				}
 			}
 			else
 			{
-				if (wasVisit)
-				{
-					LOG("Sonar: End Visit");
-					visitEnded = true;
-					return;
-				}
+				LOG("SonarState::Idle");
+				state = SonarState::Idle;
+			}
+			break;
 
-				if (resetStarted) 
+		case SonarState::Recording:
+			if (inRange)
+			{
+				if (millis() - visitBegin > trigerDelay)
 				{
-					if (millis() - resetBegin > resetDelay)
-					{						
-						visitState = false;
-					}
-				}
-				else
-				{					
-					resetStarted = true;
-					resetBegin = millis();
+					LOG("SonarState::Visited");
+					state = SonarState::Visited;
 				}
 			}
-		}
+			else
+			{
+				LOG("SonarState::Reset");
+				state = SonarState::Wait;
+				resetBegin = millis();
+			}
+			break;
 
+		case SonarState::Wait:
+			if (inRange)
+			{
+				LOG("SonarState::Recording");
+				state = SonarState::Recording;
+			}
+			else
+			{
+				if (millis() - resetBegin > resetDelay)
+				{
+					LOG("SonarState::Idle");
+					state = SonarState::Idle;
+				}				
+			}
+			break;
+
+		case SonarState::Visited:
+			return;
+		}	
 	}	
 
 private:
+	enum SonarState
+	{
+		Idle,
+		InRange,
+		Recording,
+		Wait,
+		Visited
+	};
+
 	unsigned long ping()
 	{
 		pinMode(trigPin, OUTPUT); // Switch signalpin to output
@@ -125,16 +145,13 @@ private:
 	const unsigned long checkDelay = 500;
 	unsigned long lastCheck = 0;
 	
-	const int etaDist = 26;
-	const int etaTresh = 3;
+	const int etaDist = 26; //cm
+	const int etaTresh = 3; //cm
 	const int trigerDelay = 5 * 1000;
 	const int resetDelay = 2 * 1000;
-
-	bool visitState = false;
-	bool visitEnded = false;
-	unsigned long visitBegin = 0;
-	bool resetStarted = false;
+		
+	unsigned long visitBegin = 0;	
 	unsigned long resetBegin = 0;
-
-	bool wasVisit = false;
+	
+	SonarState state = Idle;	
 };

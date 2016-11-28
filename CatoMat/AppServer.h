@@ -76,7 +76,7 @@ public:
 		return action;
 	}
 
-	void PostUpdate(Global::EAction action)
+	void PostUpdate(Global::EAction action, int value = 0)
 	{		
 		switch (action)
 		{
@@ -89,7 +89,8 @@ public:
 			break;
 
 		case Global::EAction::Visit:
-			serial.println("visit");
+			serial.print("visit: ");
+			serial.println(value);
 			break;		
 		}	
 	}	

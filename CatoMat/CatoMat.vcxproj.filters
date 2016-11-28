@@ -48,5 +48,8 @@
     <ClInclude Include="StepperMotor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

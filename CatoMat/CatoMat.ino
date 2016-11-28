@@ -113,7 +113,7 @@ void loop()
 
 	if (sonar.WasVisit())
 	{
-		server.PostUpdate(Global::EAction::Visit);
+		server.PostUpdate(Global::EAction::Visit, sonar.VisitDuration());
 		sonar.Reset();
 	}
 }

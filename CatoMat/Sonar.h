@@ -21,7 +21,12 @@ public:
 
 	bool WasVisit()
 	{
-		return state == SonarState::Visited;
+		return state == SonarState::VisitRecorded;
+	}
+
+	int VisitDuration()
+	{
+		return visitDuration / 1000;
 	}
 
 	void Reset()
@@ -32,7 +37,7 @@ public:
 
 	void Check()
 	{
-		if (state == SonarState::Visited)
+		if (state == SonarState::VisitRecorded)
 			return;
 
 		if ((millis() - lastCheck) < checkDelay)
@@ -40,9 +45,10 @@ public:
 
 		lastCheck = millis();
 
-		int dist = ping();			
+		int dist = ping();
+		LOG(dist);
 
-		bool inRange = abs(dist - etaDist) > etaTresh;
+		bool inRange = abs(dist)  < etaDist;
 
 		switch (state)
 		{
@@ -106,7 +112,12 @@ public:
 			break;
 
 		case SonarState::Visited:
-			return;
+			if (!inRange)
+			{
+				LOG("SonarState::VisitRecorded");
+				state = SonarState::VisitRecorded;
+				visitDuration = millis() - visitBegin;
+			}
 		}	
 	}	
 
@@ -117,7 +128,8 @@ private:
 		InRange,
 		Recording,
 		Wait,
-		Visited
+		Visited,
+		VisitRecorded
 	};
 
 	unsigned long ping()
@@ -145,13 +157,15 @@ private:
 	const unsigned long checkDelay = 500;
 	unsigned long lastCheck = 0;
 	
-	const int etaDist = 26; //cm
-	const int etaTresh = 3; //cm
+	const int etaDist = 15; //cm
+	
 	const int trigerDelay = 5 * 1000;
 	const int resetDelay = 2 * 1000;
 		
 	unsigned long visitBegin = 0;	
 	unsigned long resetBegin = 0;
+
+	unsigned long visitDuration = 0;
 	
 	SonarState state = Idle;	
 };

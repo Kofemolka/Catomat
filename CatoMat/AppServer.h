@@ -6,6 +6,19 @@
 #include "EAction.h"
 #include "Mem.h"
 
+//inbox/
+// mode: auto / manual
+//	cmd: feed / pump
+//	adj/
+//	 food: val
+//	 water: val
+//
+//outbox/
+// mode: auto / manual
+// uptime: val
+// visit: val
+// ack: feed / pump
+
 class AppServer
 {
 public:
@@ -31,34 +44,34 @@ public:
 			
 		String cmd = getCommand();			
 
-		if (cmd.indexOf("feed") != -1)
+		if (cmd.indexOf("inbox/cmd:feed") != -1)
 		{
 			action = Global::EAction::Feed;
 		}
-		else if (cmd.indexOf("pump") != -1)
+		else if (cmd.indexOf("inbox/cmd:pump") != -1)
 		{
 			action = Global::EAction::Pump;
 		}		
-		else if (cmd.indexOf("manual") != -1)
+		else if (cmd.indexOf("inbox/mode:manual") != -1)
 		{
 			action = Global::EAction::ModeManual;
 		}
-		else if (cmd.indexOf("auto") != -1)
+		else if (cmd.indexOf("inbox/mode:auto") != -1)
 		{
 			action = Global::EAction::ModeAuto;
 		}	
-		else if (cmd.indexOf("food=") != -1)
+		else if (cmd.indexOf("inbox/adj/food:") != -1)
 		{
-			String s = cmd.substring(cmd.indexOf("food=") + 5);
+			String s = cmd.substring(cmd.indexOf(":") + 1);
 			int amount = s.toInt();
 			if (amount > 0)
 			{
 				Mem::SetFoodAmount(amount);
 			}
 		}
-		else if (cmd.indexOf("water=") != -1)
+		else if (cmd.indexOf("inbox/adj/water:") != -1)
 		{
-			String s = cmd.substring(cmd.indexOf("water=") + 6);
+			String s = cmd.substring(cmd.indexOf(":") + 1);
 			int amount = s.toInt();
 			if (amount > 0)
 			{
@@ -81,15 +94,15 @@ public:
 		switch (action)
 		{
 		case Global::EAction::Feed:
-			serial.println("feed");
+			serial.println("outbox/ack:feed");
 			break;
 
 		case Global::EAction::Pump:
-			serial.println("pump");
+			serial.println("outbox/ack:pump");
 			break;
 
 		case Global::EAction::Visit:
-			serial.print("visit: ");
+			serial.print("outbox/visit:");
 			serial.println(value);
 			break;		
 		}	
@@ -98,19 +111,12 @@ public:
 private:
 	String getCommand()
 	{
-		char buff[256];
-		int ndx = 0;
-
 		if (serial.available() > 0)
 		{
 			String cmd = serial.readString();
 			LOG(cmd.c_str());
 
-			int n = cmd.indexOf("[inbox]:");
-			if (n != -1)
-			{
-				return cmd.substring(n + 1);
-			}
+			return cmd;
 		}
 
 		return "";
@@ -120,18 +126,20 @@ private:
 	{
 		LOG("AppServer: postStatus");
 
-		String mode = "mode: ";
+		serial.print("outbox/mode:");
 		if (currentMode == State::EMode::Auto)
-			mode += "auto";
+			serial.println("auto");
 		else
-			mode += "manual";
+			serial.println("manual");
 
-		serial.println(mode);
+		serial.print("outbox/uptime:");
+		serial.println(millis() / 1000);
 	}
 
 	void ResetEsp()
 	{		
 		LOG("AppServer: Reset ESP");
+
 		digitalWrite(_resetPin, LOW);
 		delay(100);
 		digitalWrite(_resetPin, HIGH);
@@ -141,5 +149,5 @@ private:
 	int _resetPin;
 	
 	const unsigned long checkDelay = 1000 * 60;
-	unsigned long lastCheck = 0;
+	unsigned long lastCheck = 0;	
 };

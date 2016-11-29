@@ -43,20 +43,6 @@ void setup_wifi()
   Serial.println(WiFi.localIP());
 }
 
-void callback(char* topic, byte* payload, unsigned int length)
-{
-  Serial.print("[");
-  Serial.print(topic);
-  Serial.print("]:");
-
-  for (int i = 0; i < length; i++)
-  {
-    Serial.print((char)payload[i]);
-  }
-
-  Serial.println();
-}
-
 void reconnect()
 {
   // Loop until we're reconnected
@@ -66,7 +52,9 @@ void reconnect()
     if (client.connect("Feeder", mqtt_user, mqtt_pwd))
 	{
       Serial.println("connected");
-      client.subscribe(in_topic);
+      client.subscribe(in_topic_mode);
+	  client.subscribe(in_topic_cmd);
+	  client.subscribe(in_topic_adj);
     }
 	else
 	{
@@ -91,12 +79,30 @@ void loop()
   if (Serial.available())
   {
 	  String str = Serial.readString();
+	  int ndx = str.indexOf(":");
+	  if (ndx != -1)
+	  {
+		  String topic = str.substring(0, ndx - 1);
+		  String value = str.substring(ndx + 1);
 
-	  Serial.print("[");
-	  Serial.print(out_topic);
-	  Serial.print("]:");
-	  Serial.print(str);
+		  Serial.print(topic);
+		  Serial.print(":");
+		  Serial.println(value);
 
-	  client.publish(out_topic, str.c_str());
+		  client.publish(topic, value.c_str());
+	  }
   }  
+}
+
+void callback(char* topic, byte* payload, unsigned int length)
+{
+	Serial.print(topic);
+	Serial.print(":");
+
+	for (int i = 0; i < length; i++)
+	{
+		Serial.print((char)payload[i]);
+	}
+
+	Serial.println();
 }

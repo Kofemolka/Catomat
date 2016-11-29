@@ -46,7 +46,7 @@ public:
 		lastCheck = millis();
 
 		int dist = ping();
-		LOG(dist);
+		//LOG(dist);
 
 		bool inRange = abs(dist)  < etaDist;
 

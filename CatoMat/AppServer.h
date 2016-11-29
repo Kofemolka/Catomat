@@ -55,10 +55,12 @@ public:
 		else if (cmd.indexOf("inbox/mode:manual") != -1)
 		{
 			action = Global::EAction::ModeManual;
+			serial.println("outbox/ack:manual");
 		}
 		else if (cmd.indexOf("inbox/mode:auto") != -1)
 		{
 			action = Global::EAction::ModeAuto;
+			serial.println("outbox/ack:auto");
 		}	
 		else if (cmd.indexOf("inbox/adj/food:") != -1)
 		{
@@ -67,6 +69,7 @@ public:
 			if (amount > 0)
 			{
 				Mem::SetFoodAmount(amount);
+				serial.println("outbox/ack:food");
 			}
 		}
 		else if (cmd.indexOf("inbox/adj/water:") != -1)
@@ -76,6 +79,7 @@ public:
 			if (amount > 0)
 			{
 				Mem::SetWaterAmount(amount);
+				serial.println("outbox/ack:water");
 			}
 		}
 
@@ -106,17 +110,33 @@ public:
 			serial.println(value);
 			break;		
 		}	
+
+		delay(1000);
 	}	
 
 private:
+	String _cmd;
+
 	String getCommand()
 	{
-		if (serial.available() > 0)
+		while (serial.available() > 0)
 		{
-			String cmd = serial.readString();
-			LOG(cmd.c_str());
+			char c = (char)serial.read();
 
-			return cmd;
+			_cmd += c;
+			
+			if (c == '\n' || c == '\r')
+			{
+				String cmd = _cmd;
+				_cmd = "";
+				
+				if (cmd.length() > 0)
+				{					
+					LOG(cmd);
+
+					return cmd;
+				}
+			}
 		}
 
 		return "";
@@ -132,8 +152,12 @@ private:
 		else
 			serial.println("manual");
 
+		delay(1000);
+
 		serial.print("outbox/uptime:");
-		serial.println(millis() / 1000);
+		serial.println(millis() / 1000 / 60);
+
+		delay(1000);
 	}
 
 	void ResetEsp()
@@ -141,8 +165,9 @@ private:
 		LOG("AppServer: Reset ESP");
 
 		digitalWrite(_resetPin, LOW);
-		delay(100);
+		delay(1000);
 		digitalWrite(_resetPin, HIGH);
+		delay(1000);		
 	}
 		
 	SoftwareSerial serial;

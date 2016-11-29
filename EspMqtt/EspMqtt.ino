@@ -54,7 +54,8 @@ void reconnect()
       Serial.println("connected");
       client.subscribe(in_topic_mode);
 	  client.subscribe(in_topic_cmd);
-	  client.subscribe(in_topic_adj);
+	  client.subscribe(in_topic_adj_food);
+	  client.subscribe(in_topic_adj_water);
     }
 	else
 	{
@@ -78,20 +79,45 @@ void loop()
 
   if (Serial.available())
   {
-	  String str = Serial.readString();
+	  String str = getCommand();
 	  int ndx = str.indexOf(":");
 	  if (ndx != -1)
 	  {
-		  String topic = str.substring(0, ndx - 1);
+		  String topic = str.substring(0, ndx);
 		  String value = str.substring(ndx + 1);
 
 		  Serial.print(topic);
 		  Serial.print(":");
 		  Serial.println(value);
 
-		  client.publish(topic, value.c_str());
+		  client.publish(topic.c_str(), value.c_str());
 	  }
   }  
+}
+
+String _cmd;
+
+String getCommand()
+{
+	while (Serial.available() > 0)
+	{
+		char c = (char)Serial.read();
+
+		_cmd += c;
+
+		if (c == '\n')
+		{
+			String cmd = _cmd;
+			_cmd = "";
+
+			if (cmd != "\n" && cmd != "\r")
+			{
+				return cmd;
+			}
+		}
+	}
+
+	return "";
 }
 
 void callback(char* topic, byte* payload, unsigned int length)

@@ -93,7 +93,7 @@ void loop()
 	switch (action)
 	{	
 	case Global::Feed:
-		Feed(true);
+		Feed();
 		break;
 
 	case Global::Pump:
@@ -118,7 +118,7 @@ void loop()
 	}
 }
 
-void Feed(bool update)
+void Feed()
 {	
 	LOG("Serving Food...");
 		
@@ -126,10 +126,7 @@ void Feed(bool update)
 		
 	feeder.Feed();
 
-	if (update)
-	{
-		server.PostUpdate(Global::EAction::Feed);
-	}
+	server.PostUpdate(Global::EAction::Feed);	
 
 	state.Flash(State::EFlash::None);
 }

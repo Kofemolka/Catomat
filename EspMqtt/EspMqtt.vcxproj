@@ -84,7 +84,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\u2m0ouqq.zaq\Micro Platforms\default\debuggers;C:\Users\ayakuba\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\eightanaloginputs;D:\Projects\Catomat\EspMqtt;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\libraries\ESP8266WiFi\src;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\libraries\ESP8266WiFi\src\utility;C:\Users\ayakuba\Documents\Arduino\libraries\pubsubclient-master\src;C:\Users\ayakuba\Documents\Arduino\libraries\pubsubclient-master\src\utility;C:\Program Files (x86)\Arduino\libraries;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\u2m0ouqq.zaq\Micro Platforms\default\debuggers;C:\Users\ayakuba\Documents\Arduino\libraries;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\libb64;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\spiffs;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\umm_malloc;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\variants\generic;D:\Projects\Catomat\EspMqtt;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0/tools/sdk/include;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0/tools/sdk/lwip/include;C:\Users\ayakuba\AppData\Local\Temp\VMicroBuilds\EspMqtt\esp8266_generic/core;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2\xtensa-lx106-elf\include\c++\4.8.2;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2\xtensa-lx106-elf\include\c++\4.8.2\xtensa-lx106-elf;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2\xtensa-lx106-elf\include;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2\lib\gcc\xtensa-lx106-elf\4.8.2\include;C:\Users\ayakuba\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.3.0\tools\sdk\include;D:\Projects\Catomat\CatoMat;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>D:\Projects\Catomat\EspMqtt\__vm\.EspMqtt.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PreprocessorDefinitions>__ESP8266_ESp8266__;__ESP8266_ESP8266__;__ets__;ICACHE_FLASH;F_CPU=80000000L;LWIP_OPEN_SRC;ARDUINO=10608;ARDUINO_ESP8266_ESP01;ARDUINO_ARCH_ESP8266;ESP8266;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -120,6 +122,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\CatoMat\SerialCommand.h">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
+    </ClInclude>
     <ClInclude Include="Config.h" />
     <ClInclude Include="__vm\.EspMqtt.vsarduino.h" />
   </ItemGroup>

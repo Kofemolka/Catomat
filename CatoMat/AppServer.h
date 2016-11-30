@@ -5,6 +5,7 @@
 #include "State.h"
 #include "EAction.h"
 #include "Mem.h"
+#include "SerialCommand.h"
 
 //inbox/
 // mode: auto / manual
@@ -19,11 +20,17 @@
 // visit: val
 // ack: feed / pump
 
+#define OUTBOX_MODE "outbox/mode"
+#define OUTBOX_UPTIME "outbox/uptime"
+#define OUTBOX_VISIT "outbox/visit"
+#define OUTBOX_ACK "outbox/ack"
+
 class AppServer
 {
 public:
 	AppServer(int rx, int tx, int reset) :
 		serial(rx, tx),
+		serialCmd(serial),
 		_resetPin(reset)
 	{
 		pinMode(_resetPin, OUTPUT);
@@ -36,13 +43,19 @@ public:
 		serial.begin(9600);
 
 		ResetEsp();
+
+		lastCheck = millis();
 	}
 	
 	Global::EAction Check(State::EMode currentMode)
 	{		
 		Global::EAction action = Global::EAction::None;
 			
-		String cmd = getCommand();			
+		String cmd = serialCmd.GetCommand();	
+		if (cmd.length() > 0 && cmd[0] != '\n' && cmd[0] != '\r')
+		{
+			LOG(cmd);
+		}
 
 		if (cmd.indexOf("inbox/cmd:feed") != -1)
 		{
@@ -55,12 +68,14 @@ public:
 		else if (cmd.indexOf("inbox/mode:manual") != -1)
 		{
 			action = Global::EAction::ModeManual;
-			serial.println("outbox/ack:manual");
+
+			sendMsg(OUTBOX_ACK, "manual");
 		}
 		else if (cmd.indexOf("inbox/mode:auto") != -1)
 		{
 			action = Global::EAction::ModeAuto;
-			serial.println("outbox/ack:auto");
+
+			sendMsg(OUTBOX_ACK, "auto");			
 		}	
 		else if (cmd.indexOf("inbox/adj/food:") != -1)
 		{
@@ -69,7 +84,8 @@ public:
 			if (amount > 0)
 			{
 				Mem::SetFoodAmount(amount);
-				serial.println("outbox/ack:food");
+				
+				sendMsg(OUTBOX_ACK, "food");
 			}
 		}
 		else if (cmd.indexOf("inbox/adj/water:") != -1)
@@ -79,7 +95,8 @@ public:
 			if (amount > 0)
 			{
 				Mem::SetWaterAmount(amount);
-				serial.println("outbox/ack:water");
+
+				sendMsg(OUTBOX_ACK, "water");				
 			}
 		}
 
@@ -98,66 +115,39 @@ public:
 		switch (action)
 		{
 		case Global::EAction::Feed:
-			serial.println("outbox/ack:feed");
+			sendMsg(OUTBOX_ACK, "feed");			
 			break;
 
 		case Global::EAction::Pump:
-			serial.println("outbox/ack:pump");
+			sendMsg(OUTBOX_ACK, "pump");			
 			break;
 
 		case Global::EAction::Visit:
-			serial.print("outbox/visit:");
-			serial.println(value);
+			sendMsg(OUTBOX_VISIT, String(value).c_str());			
 			break;		
 		}	
-
-		delay(1000);
 	}	
 
 private:
-	String _cmd;
-
-	String getCommand()
+	void sendMsg(const char* topic, const char* msg)
 	{
-		while (serial.available() > 0)
-		{
-			char c = (char)serial.read();
+		serial.print(topic);
+		serial.print(":");
+		serial.println(msg);
 
-			_cmd += c;
-			
-			if (c == '\n' || c == '\r')
-			{
-				String cmd = _cmd;
-				_cmd = "";
-				
-				if (cmd.length() > 0)
-				{					
-					LOG(cmd);
-
-					return cmd;
-				}
-			}
-		}
-
-		return "";
+		delay(100);
 	}
 
 	void postStatus(State::EMode currentMode)
 	{
 		LOG("AppServer: postStatus");
 
-		serial.print("outbox/mode:");
 		if (currentMode == State::EMode::Auto)
-			serial.println("auto");
+			sendMsg(OUTBOX_MODE, "auto");
 		else
-			serial.println("manual");
+			sendMsg(OUTBOX_MODE, "manual");	
 
-		delay(1000);
-
-		serial.print("outbox/uptime:");
-		serial.println(millis() / 1000 / 60);
-
-		delay(1000);
+		sendMsg(OUTBOX_UPTIME, String(millis() / 1000 / 60).c_str());	
 	}
 
 	void ResetEsp()
@@ -170,9 +160,10 @@ private:
 		delay(1000);		
 	}
 		
+	SerialCommand serialCmd;
 	SoftwareSerial serial;
 	int _resetPin;
 	
-	const unsigned long checkDelay = 1000 * 60;
+	const unsigned long checkDelay = 60000;
 	unsigned long lastCheck = 0;	
 };

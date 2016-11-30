@@ -9,9 +9,11 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include "Config.h"
+#include "SerialCommand.h"
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+SerialCommand serialCmd(Serial);
 
 void setup()
 {
@@ -77,22 +79,19 @@ void loop()
 
   client.loop();
 
-  if (Serial.available())
-  {
-	  String str = getCommand();
-	  int ndx = str.indexOf(":");
-	  if (ndx != -1)
-	  {
-		  String topic = str.substring(0, ndx);
-		  String value = str.substring(ndx + 1);
+  	  String str = serialCmd.GetCommand();
+	int ndx = str.indexOf(":");
+	if (ndx != -1)
+	{
+		String topic = str.substring(0, ndx);
+		String value = str.substring(ndx + 1);
 
-		  Serial.print(topic);
-		  Serial.print(":");
-		  Serial.println(value);
+		Serial.print(topic);
+		Serial.print(":");
+		Serial.println(value);
 
-		  client.publish(topic.c_str(), value.c_str());
-	  }
-  }  
+		client.publish(topic.c_str(), value.c_str());
+	}  
 }
 
 String _cmd;
@@ -105,15 +104,19 @@ String getCommand()
 
 		_cmd += c;
 
-		if (c == '\n')
+		if (c == '\n' || c == '\r')
 		{
-			String cmd = _cmd;
-			_cmd = "";
-
-			if (cmd != "\n" && cmd != "\r")
+			while (Serial.available() > 0)
 			{
-				return cmd;
+				char c = (char)Serial.read();
+
+				_cmd += c;
 			}
+
+			String cmd = _cmd;
+			_cmd = "";			
+
+			return cmd;
 		}
 	}
 

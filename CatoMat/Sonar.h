@@ -67,8 +67,7 @@ public:
 				if (millis() - visitBegin > trigerDelay)
 				{
 					LOG("SonarState::Recording");
-					state = SonarState::Recording;
-					visitBegin = millis();
+					state = SonarState::Recording;					
 				}
 			}
 			else
@@ -81,7 +80,7 @@ public:
 		case SonarState::Recording:
 			if (inRange)
 			{
-				if (millis() - visitBegin > trigerDelay)
+				if (millis() - visitBegin > visitConfirmedDelay)
 				{
 					LOG("SonarState::Visited");
 					state = SonarState::Visited;
@@ -159,7 +158,8 @@ private:
 	
 	const int etaDist = 20; //cm
 	
-	const int trigerDelay = 5 * 1000;
+	const int trigerDelay = 2 * 1000;
+	const int visitConfirmedDelay = 5 * 1000;
 	const int resetDelay = 2 * 1000;
 		
 	unsigned long visitBegin = 0;	

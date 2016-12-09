@@ -47,7 +47,7 @@ public:
 		lastCheck = millis();
 	}
 	
-	Global::EAction Check(State::EMode currentMode)
+	Global::EAction Check(EMode currentMode)
 	{		
 		Global::EAction action = Global::EAction::None;
 			
@@ -138,16 +138,29 @@ private:
 		delay(100);
 	}
 
-	void postStatus(State::EMode currentMode)
+	void postStatus(EMode currentMode)
 	{
 		LOG("AppServer: postStatus");
 
-		if (currentMode == State::EMode::Auto)
+		if (currentMode == EMode::Auto)
 			sendMsg(OUTBOX_MODE, "auto");
 		else
 			sendMsg(OUTBOX_MODE, "manual");	
 
-		sendMsg(OUTBOX_UPTIME, String(millis() / 1000 / 60).c_str());	
+		int totalSeconds = millis() / 1000;
+		int seconds = totalSeconds % 60;
+		int minutes = (totalSeconds % (60 * 60)) / 60;
+		int hours = totalSeconds / (60 * 60);
+
+		String uptime = String(hours) + ":";
+		if (minutes < 10)
+			uptime += "0";
+		uptime += minutes;
+		uptime += ":";
+		if (seconds < 10)
+			uptime += "0";
+		uptime += seconds;
+		sendMsg(OUTBOX_UPTIME, uptime.c_str());
 	}
 
 	void ResetEsp()

@@ -18,12 +18,14 @@ public:
 
 	void Feed()
 	{
+		stepper.Spin(0.25, false);
+		
 		stepper.Spin( ((float)(Mem::GetFoodAmount())) / GrPerRev, true);
 	}
 
 private:
 	StepperMotor stepper;
 		
-	const float GrPerRev = 5;
+	const float GrPerRev = 10;
 };
 

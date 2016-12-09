@@ -3,15 +3,21 @@
 #include "log.h"
 #include "Mem.h"
 
+enum EMode : uint8_t
+{
+	Manual = 0,
+	Auto = 1
+};
+
 class State
 {
 public:
-	State(int pinBtn, int pinLedAuto, int pinLedManual) :
+	State(int pinBtn, int pinLedAuto, int pinLedManual, void (*onStateChanged)(EMode))  :
 		pinBtn(pinBtn),
 		pinLedAuto(pinLedAuto),
 		pinLedManual(pinLedManual)
 	{
-
+		_onStateChanged = onStateChanged;
 	}
 
 	enum EFlash
@@ -19,13 +25,7 @@ public:
 		None,
 		Fast,
 		Slow
-	};
-
-	enum EMode : uint8_t
-	{
-		Manual = 0,
-		Auto = 1
-	};
+	};	
 
 	void Setup()
 	{
@@ -92,9 +92,11 @@ public:
 	void Switch(EMode newMode)
 	{
 		currentMode = newMode;
-
+		
 		Mem::SetMode(currentMode);
 				
+		_onStateChanged(currentMode);
+
 		if (currentMode == EMode::Auto)
 		{
 			LOG("Mode: Auto");
@@ -162,4 +164,6 @@ private:
 
 	EMode currentMode;
 	bool needFood = false;
+
+	void (*_onStateChanged)(EMode);
 };

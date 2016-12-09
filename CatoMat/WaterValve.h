@@ -31,7 +31,7 @@ public:
 		servo.detach();
 
 		int pause = ((float)Mem::GetWaterAmount() - gPerMovement) / gPerMsec;
-		delay(pause);		
+		delay(pause);				
 
 		servo.attach(pin);
 		close();
@@ -64,11 +64,11 @@ private:
 
 	const int pin;
 
-	const int closedPos = 135;
-	const int openedPos = 65;
+	const int closedPos = 147;
+	const int openedPos = 95;
 
-	const float gPerMovement = 10;
-	const float gPerMsec = 0.1;
+	const float gPerMovement = 2;
+	const float gPerMsec = 0.003;
 
 	const int stepDelay = 50;
 

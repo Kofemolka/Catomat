@@ -157,7 +157,7 @@ private:
 	const unsigned long checkDelay = 500;
 	unsigned long lastCheck = 0;
 	
-	const int etaDist = 15; //cm
+	const int etaDist = 20; //cm
 	
 	const int trigerDelay = 5 * 1000;
 	const int resetDelay = 2 * 1000;

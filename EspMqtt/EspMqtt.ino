@@ -47,6 +47,12 @@ void setup_wifi()
 
 void reconnect()
 {
+	while (WiFi.status() != WL_CONNECTED)
+	{
+		delay(500);
+		Serial.print(".");
+	}
+
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
@@ -79,7 +85,7 @@ void loop()
 
   client.loop();
 
-  	  String str = serialCmd.GetCommand();
+  	String str = serialCmd.GetCommand();
 	int ndx = str.indexOf(":");
 	if (ndx != -1)
 	{
@@ -90,7 +96,7 @@ void loop()
 		Serial.print(":");
 		Serial.println(value);
 
-		client.publish(topic.c_str(), value.c_str());
+		client.publish(topic.c_str(), value.c_str(), true);
 	}  
 }
 

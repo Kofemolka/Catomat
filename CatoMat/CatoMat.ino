@@ -23,12 +23,19 @@ const unsigned long HOUR = MINUTE * 60;
 
 //Schedule schedule(MINUTE/3, MINUTE/2);
 Schedule schedule(HOUR * 4, HOUR * 24);
-
-State state(10, 9, 8);
+State state(10, 9, 8, &onStateChanged);
 WaterValve waterValve(11);
 Feeder feeder(7, 5, 6);
 Sonar sonar(12, 13);
 AppServer server(4, 2, 3);
+
+void onStateChanged(EMode mode)
+{
+	if (mode == EMode::Auto)
+	{
+		schedule.Reset();
+	}
+}
 
 void setup() 
 {
@@ -85,7 +92,7 @@ void loop()
 		action = server.Check(state.Current());
 	}
 
-	if (action == Global::EAction::None && state.Current() == State::EMode::Auto)
+	if (action == Global::EAction::None && state.Current() == EMode::Auto)
 	{
 		action = schedule.Check();
 	}		
@@ -101,11 +108,11 @@ void loop()
 		break;
 	
 	case Global::ModeManual:
-		state.Switch(State::EMode::Manual);
+		state.Switch(EMode::Manual);
 		break;
 
 	case Global::ModeAuto:
-		state.Switch(State::EMode::Auto);
+		state.Switch(EMode::Auto);
 		break;	
 	}
 

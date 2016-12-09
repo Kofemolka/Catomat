@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EAction.h"
+#include "Log.h"
 
 class Schedule
 {
@@ -9,6 +10,13 @@ public:
 		: foodInterval(foodInterval), waterInterval(waterInterval)
 	{
 		lastFeed = lastPump = millis();		
+	}
+
+	void Reset()
+	{
+		LOG("Schedule::Reset");
+
+		lastFeed = lastPump = millis();
 	}
 
 	Global::EAction Check()

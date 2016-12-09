@@ -160,6 +160,8 @@ private:
 		if (seconds < 10)
 			uptime += "0";
 		uptime += seconds;
+
+		LOG(uptime);
 		sendMsg(OUTBOX_UPTIME, uptime.c_str());
 	}
 

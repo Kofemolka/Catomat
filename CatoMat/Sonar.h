@@ -158,9 +158,9 @@ private:
 	
 	const int etaDist = 20; //cm
 	
-	const int trigerDelay = 2 * 1000;
-	const int visitConfirmedDelay = 5 * 1000;
-	const int resetDelay = 2 * 1000;
+	const int trigerDelay = 3 * 1000;
+	const int visitConfirmedDelay = 6 * 1000;
+	const int resetDelay = 3 * 1000;
 		
 	unsigned long visitBegin = 0;	
 	unsigned long resetBegin = 0;

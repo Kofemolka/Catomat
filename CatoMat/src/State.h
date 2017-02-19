@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STATE_H
+#define STATE_H
 
 #include "log.h"
 #include "Mem.h"
@@ -25,12 +26,10 @@ public:
 		None,
 		Fast,
 		Slow
-	};	
+	};
 
 	void Setup()
 	{
-		LOG("State: Setup");
-
 		pinMode(pinLedAuto, OUTPUT);
 		pinMode(pinLedManual, OUTPUT);
 		pinMode(pinBtn, INPUT);
@@ -74,7 +73,7 @@ public:
 			}
 
 			btnPress = false;
-		}		
+		}
 	}
 
 	EMode Current()
@@ -92,18 +91,18 @@ public:
 	void Switch(EMode newMode)
 	{
 		currentMode = newMode;
-		
+
 		Mem::SetMode(currentMode);
-				
+
 		_onStateChanged(currentMode);
 
 		if (currentMode == EMode::Auto)
 		{
-			LOG("Mode: Auto");
+			//LOG("Mode: Auto");
 		}
 		else
 		{
-			LOG("Mode: Manual");
+			//LOG("Mode: Manual");
 		}
 	}
 
@@ -152,10 +151,10 @@ private:
 
 	const unsigned long switchDelay = 1000 * 3;
 	const unsigned long feedDelay = 1000;
-	
+
 	bool btnPress = false;
 	unsigned long pressStart = 0;
-	
+
 	EFlash flashing = EFlash::None;
 	bool flashHigh = false;
 	unsigned long flashSwitchTime = 0;
@@ -167,3 +166,5 @@ private:
 
 	void (*_onStateChanged)(EMode);
 };
+
+#endif

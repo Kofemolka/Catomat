@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCHEDULE_H
+#define SCHEDULE_H
 
 #include "EAction.h"
 #include "Log.h"
@@ -9,12 +10,12 @@ public:
 	Schedule(unsigned long foodInterval, unsigned long waterInterval)
 		: foodInterval(foodInterval), waterInterval(waterInterval)
 	{
-		lastFeed = lastPump = millis();		
+		lastFeed = lastPump = millis();
 	}
 
 	void Reset()
 	{
-		LOG("Schedule::Reset");
+		//LOG("Schedule::Reset");
 
 		lastFeed = lastPump = millis();
 	}
@@ -35,11 +36,11 @@ public:
 		{
 			lastPump = now;
 			return Global::EAction::Pump;
-		}			
+		}
 
 		return Global::EAction::None;
 	}
-	
+
 private:
 	unsigned long lastFeed;
 	unsigned long lastPump;
@@ -48,3 +49,4 @@ private:
 	const unsigned long waterInterval;
 };
 
+#endif

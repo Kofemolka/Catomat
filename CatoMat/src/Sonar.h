@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SONAR_H
+#define SONAR_H
+
 #include "log.h"
 
 #define abs(x) ((x)<0 ? -(x) : (x))
@@ -6,7 +8,7 @@
 class Sonar
 {
 public:
-	Sonar(int trigPin, int echoPin) :		
+	Sonar(int trigPin, int echoPin) :
 		trigPin(trigPin), echoPin(echoPin)
 	{
 
@@ -14,7 +16,7 @@ public:
 
 	void Setup()
 	{
-		LOG("Sonar: Setup");
+		//LOG("Sonar: Setup");
 		lastCheck = 0;
 		state = SonarState::Idle;
 	}
@@ -31,7 +33,7 @@ public:
 
 	void Reset()
 	{
-		LOG("Sonar Reset");
+		//LOG("Sonar Reset");
 		state = SonarState::Idle;
 	}
 
@@ -55,10 +57,10 @@ public:
 		case SonarState::Idle:
 			if (inRange)
 			{
-				LOG("SonarState::InRange");
+				//LOG("SonarState::InRange");
 				state = SonarState::InRange;
 				visitBegin = millis();
-			}			
+			}
 			break;
 
 		case SonarState::InRange:
@@ -66,13 +68,13 @@ public:
 			{
 				if (millis() - visitBegin > trigerDelay)
 				{
-					LOG("SonarState::Recording");
-					state = SonarState::Recording;					
+					//LOG("SonarState::Recording");
+					state = SonarState::Recording;
 				}
 			}
 			else
 			{
-				LOG("SonarState::Idle");
+				//LOG("SonarState::Idle");
 				state = SonarState::Idle;
 			}
 			break;
@@ -82,13 +84,13 @@ public:
 			{
 				if (millis() - visitBegin > visitConfirmedDelay)
 				{
-					LOG("SonarState::Visited");
+					//LOG("SonarState::Visited");
 					state = SonarState::Visited;
 				}
 			}
 			else
 			{
-				LOG("SonarState::Reset");
+				//LOG("SonarState::Reset");
 				state = SonarState::Wait;
 				resetBegin = millis();
 			}
@@ -97,28 +99,28 @@ public:
 		case SonarState::Wait:
 			if (inRange)
 			{
-				LOG("SonarState::Recording");
+				//LOG("SonarState::Recording");
 				state = SonarState::Recording;
 			}
 			else
 			{
 				if (millis() - resetBegin > resetDelay)
 				{
-					LOG("SonarState::Idle");
+					//LOG("SonarState::Idle");
 					state = SonarState::Idle;
-				}				
+				}
 			}
 			break;
 
 		case SonarState::Visited:
 			if (!inRange)
 			{
-				LOG("SonarState::VisitRecorded");
+				//LOG("SonarState::VisitRecorded");
 				state = SonarState::VisitRecorded;
 				visitDuration = millis() - visitBegin;
 			}
-		}	
-	}	
+		}
+	}
 
 private:
 	enum SonarState
@@ -146,26 +148,28 @@ private:
 											  // can likely bound the time like this -- marcmerlin
 											  // echo = pulseIn(ultraSoundSignal, HIGH, 38000)
 		int echo = pulseIn(echoPin, HIGH); //Listen for echo
-		int ultrasoundValue = (echo / 58.138); 
+		int ultrasoundValue = (echo / 58.138);
 		return ultrasoundValue;
-	}	
+	}
 
 	int trigPin;
 	int echoPin;
 
 	const unsigned long checkDelay = 500;
 	unsigned long lastCheck = 0;
-	
+
 	const int etaDist = 20; //cm
-	
+
 	const int trigerDelay = 3 * 1000;
 	const int visitConfirmedDelay = 6 * 1000;
-	const int resetDelay = 3 * 1000;
-		
-	unsigned long visitBegin = 0;	
+	const int resetDelay = 5 * 1000;
+
+	unsigned long visitBegin = 0;
 	unsigned long resetBegin = 0;
 
 	unsigned long visitDuration = 0;
-	
-	SonarState state = Idle;	
+
+	SonarState state = Idle;
 };
+
+#endif

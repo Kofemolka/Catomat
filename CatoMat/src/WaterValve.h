@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WATERVALVE_H
+#define WATERVALVE_H
 
 #include <Servo.h>
 #include "Mem.h"
@@ -6,15 +7,15 @@
 class WaterValve
 {
 public:
-	WaterValve(int pin) :		
+	WaterValve(int pin) :
 		pin(pin)
 	{
 		curPos = closedPos;
 	}
-	
+
 	void Setup()
-	{			
-		LOG("WaterValve: Setup");
+	{
+		//LOG("WaterValve: Setup");
 
 		servo.attach(pin);
 
@@ -30,8 +31,12 @@ public:
 		open();
 		servo.detach();
 
-		int pause = ((float)Mem::GetWaterAmount() - gPerMovement) / gPerMsec;
-		delay(pause);				
+		byte waterAmount = Mem::GetWaterAmount();
+		if (waterAmount > gPerMovement)
+		{
+			unsigned int pause = ((float)waterAmount - gPerMovement) / gPerMsec;
+			delay(pause);
+		}
 
 		servo.attach(pin);
 		close();
@@ -40,10 +45,10 @@ public:
 
 private:
 	void open()
-	{				
+	{
 		for (curPos; curPos >= openedPos; curPos -= 10)
 		{
-			servo.write(curPos);			
+			servo.write(curPos);
 			delay(stepDelay);
 		}
 	}
@@ -51,10 +56,10 @@ private:
 	void close()
 	{
 		for (curPos; curPos <= closedPos; curPos += 10)
-		{			
-			servo.write(curPos);			
+		{
+			servo.write(curPos);
 			delay(stepDelay);
-		}	
+		}
 
 		delay(stepDelay*4);
 	}
@@ -74,3 +79,5 @@ private:
 
 	int curPos;
 };
+
+#endif

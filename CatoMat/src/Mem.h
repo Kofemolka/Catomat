@@ -1,5 +1,7 @@
-#pragma once
+#ifndef MEM_H
+#define MEM_H
 
+#include <EEPROM.h>
 #include "log.h"
 
 class Mem
@@ -14,11 +16,11 @@ public:
 	{
 		writeVal(modeOff, mode);
 
-		LOG(String("Mem:SetMode:") + mode);
+		//LOG(String("Mem:SetMode:") + mode);
 	}
 
 	static uint8_t GetFoodAmount()
-	{		
+	{
 		return readVal(foodOff);
 	}
 
@@ -26,7 +28,7 @@ public:
 	{
 		writeVal(foodOff, amount);
 
-		LOG(String("Mem:SetFoodAmount:") + amount);
+		//LOG(String("Mem:SetFoodAmount:") + amount);
 	}
 
 	static uint8_t GetWaterAmount()
@@ -38,10 +40,10 @@ public:
 	{
 		writeVal(waterOff, amount);
 
-		LOG(String("Mem:SetWaterAmount:") + amount);
+		//LOG(String("Mem:SetWaterAmount:") + amount);
 	}
 
-private:	
+private:
 	static void writeVal(const unsigned long off, uint8_t val)
 	{
 		if (val > 255)
@@ -61,3 +63,5 @@ private:
 	static const unsigned int foodOff = 1;
 	static const unsigned int waterOff = 2;
 };
+
+#endif

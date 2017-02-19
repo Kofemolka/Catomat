@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STEPPERMOTOR_H
+#define STEPPERMOTOR_H
 
 class StepperMotor
 {
@@ -12,7 +13,7 @@ public:
 	{
 		pinMode(_en, OUTPUT);
 		pinMode(_clk, OUTPUT);
-		pinMode(_cw, OUTPUT);	
+		pinMode(_cw, OUTPUT);
 
 		digitalWrite(_en, HIGH);
 	}
@@ -24,7 +25,7 @@ public:
 		digitalWrite(_cw, clockwise ? HIGH : LOW);
 
 		for (int s = 0; s < spins*StepsPerRev; s++)
-		{			
+		{
 			step();
 		}
 
@@ -47,3 +48,5 @@ private:
 	const int StepsPerRev = 200*16;
 	const int StepDelay = 200;
 };
+
+#endif

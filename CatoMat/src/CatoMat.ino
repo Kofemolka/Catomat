@@ -5,8 +5,6 @@
 */
 
 #include <Arduino.h>
-#include <EEPROM.h>
-#include <Servo.h>
 
 #include "log.h"
 #include "WaterValve.h"
@@ -21,13 +19,17 @@ const unsigned long SECOND = 1000;
 const unsigned long MINUTE = SECOND * 60;
 const unsigned long HOUR = MINUTE * 60;
 
-//Schedule schedule(MINUTE/3, MINUTE/2);
 Schedule schedule(HOUR * 4, HOUR * 24);
 State state(10, 9, 8, &onStateChanged);
 WaterValve waterValve(11);
 Feeder feeder(7, 5, 6);
 Sonar sonar(12, 13);
-AppServer server(4, 2, 3);
+AppServer server(3);
+
+
+MsgBuffer AppServer::_inMsgBuf;
+MsgBuffer AppServer::_outMsgBuf;
+volatile Global::EAction AppServer::_serverAction;
 
 void onStateChanged(EMode mode)
 {
@@ -37,25 +39,25 @@ void onStateChanged(EMode mode)
 	}
 }
 
-void setup() 
+void setup()
 {
 	Serial.begin(9600);
 
-	setupInterrupts();	
+	setupInterrupts();
 
-	LOG("CatoMat: Setup...");		
+	LOG(F("CatoMat: Setup..."));
 
 	state.Setup();
 	state.Flash(State::EFlash::Fast);
-	
+
 	feeder.Setup();
-	waterValve.Setup();	
+	waterValve.Setup();
 	sonar.Setup();
 	server.Setup();
 
 	state.Flash(State::EFlash::None);
 
-	LOG("CatoMat: Ready");
+	LOG(F("CatoMat: Ready"));
 }
 
 void setupInterrupts()
@@ -78,9 +80,9 @@ void setupInterrupts()
 }
 
 void loop()
-{	
-	Global::EAction action = Global::EAction::None; 
-	
+{
+	Global::EAction action = Global::EAction::None;
+
 	state.Check();
 
 	if (state.NeedFood())
@@ -95,10 +97,10 @@ void loop()
 	if (action == Global::EAction::None && state.Current() == EMode::Auto)
 	{
 		action = schedule.Check();
-	}		
+	}
 
 	switch (action)
-	{	
+	{
 	case Global::Feed:
 		Feed();
 		break;
@@ -106,14 +108,17 @@ void loop()
 	case Global::Pump:
 		Pour();
 		break;
-	
+
 	case Global::ModeManual:
 		state.Switch(EMode::Manual);
 		break;
 
 	case Global::ModeAuto:
 		state.Switch(EMode::Auto);
-		break;	
+		break;
+
+	default:
+		break;
 	}
 
 	sonar.Check();
@@ -126,34 +131,32 @@ void loop()
 }
 
 void Feed()
-{	
-	LOG("Serving Food...");
-		
+{
+	LOG(F("Serving Food..."));
+
 	state.Flash(State::EFlash::Slow);
-		
+
 	feeder.Feed();
 
-	server.PostUpdate(Global::EAction::Feed);	
+	server.PostUpdate(Global::EAction::Feed);
 
 	state.Flash(State::EFlash::None);
 }
 
 void Pour()
 {
-	LOG("Serving Water...");
+	LOG(F("Serving Water..."));
 
 	state.Flash(State::EFlash::Slow);
 
 	waterValve.Serve();
 
 	server.PostUpdate(Global::EAction::Pump);
-	
+
 	state.Flash(State::EFlash::None);
 }
 
 ISR(TIMER2_COMPA_vect)
-{	
-	state.UpdateLeds();	
+{
+	state.UpdateLeds();
 }
-
-

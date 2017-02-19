@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EACTION_H
+#define EACTION_H
 
 namespace Global
 {
@@ -12,3 +13,5 @@ namespace Global
 		ModeAuto	= 16
 	};
 }
+
+#endif
